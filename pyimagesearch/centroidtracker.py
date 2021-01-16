@@ -3,6 +3,13 @@ from scipy.spatial import distance as dist
 from collections import OrderedDict
 import numpy as np
 
+
+
+
+def getinfo():
+	return True
+
+
 class CentroidTracker():
 	def __init__(self, maxDisappeared=50):
 		# initialize the next unique object ID along with two ordered
@@ -12,6 +19,7 @@ class CentroidTracker():
 		self.nextObjectID = 0
 		self.objects = OrderedDict()
 		self.disappeared = OrderedDict()
+		self.info = ""
 
 		# store the number of maximum consecutive frames a given
 		# object is allowed to be marked as "disappeared" until we
@@ -56,14 +64,18 @@ class CentroidTracker():
 		# loop over the bounding box rectangles
 		for (i, (startX, startY, endX, endY)) in enumerate(rects):
 			# use the bounding box coordinates to derive the centroid
-			cX = int((startX + endX) / 2.0)
-			cY = int((startY + endY) / 2.0)
+			# cX = int((startX + endX) / 2.0)
+			# cY = int((startY + endY) / 2.0)			
+			cX = int(startX)
+			cY = int(startY)
 			inputCentroids[i] = (cX, cY)
 
 		# if we are currently not tracking any objects take the input
 		# centroids and register each of them
 		if len(self.objects) == 0:
 			for i in range(0, len(inputCentroids)):
+				print("send info",self.objects.items())
+				
 				self.register(inputCentroids[i])
 
 		# otherwise, are are currently tracking objects so we need to
@@ -147,6 +159,7 @@ class CentroidTracker():
 			# register each new input centroid as a trackable object
 			else:
 				for col in unusedCols:
+					print("send info")
 					self.register(inputCentroids[col])
 
 		# return the set of trackable objects

@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 
 class CentroidTracker():
-    def __init__(self, maxDisappeared=50):
+    def __init__(self, maxDisappeared=20):
         self.nextObjectID = 0
         self.objects = OrderedDict()
         self.disappeared = OrderedDict()

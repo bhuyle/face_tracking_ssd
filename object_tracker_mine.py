@@ -6,22 +6,28 @@ import argparse
 import imutils
 import time
 
-ap = argparse.ArgumentParser()
-ap.add_argument("-p", "--prototxt", required=True, help="Path to Caffe 'deploy' prototxt file")
-ap.add_argument("-m", "--model", required=True, help="Path to Caffe pre-trained model")
-ap.add_argument("-c", "--confidence", type=float, default=0.5, help="Minimum probability to filter weak detections")
-args = vars(ap.parse_args())
+# ap = argparse.ArgumentParser()
+# ap.add_argument("-p", "--prototxt", required=True, help="Path to Caffe 'deploy' prototxt file")
+# ap.add_argument("-m", "--model", required=True, help="Path to Caffe pre-trained model")
+# ap.add_argument("-c", "--confidence", type=float, default=0.5, help="Minimum probability to filter weak detections")
+# args = vars(ap.parse_args())
 
 
 ct = CentroidTracker()
 (H, W) = (None, None)
 
-print("[INFO] loading model...")
-net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
+# print("[INFO] loading model...")
+# net = cv2.dnn.readNetFromCaffe(args["prototxt"], args["model"])
 
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
+
+# load our serialized model from disk
+print("[INFO] loading model...")
+prototxt = "deploy.prototxt"
+model = "res10_300x300_ssd_iter_140000.caffemodel"
+net = cv2.dnn.readNetFromCaffe(prototxt, model)
 
 while True:
     frame = vs.read()
@@ -35,9 +41,8 @@ while True:
     detections = net.forward()
     rects = []
 
-
     for i in range(0, detections.shape[2]):
-        if detections[0, 0, i, 2] > args['confidence']:
+        if detections[0, 0, i, 2] > 0.5:
             box = detections[0, 0, i, 3:7] * np.array([W, H, W, H])
             rects.append(box.astype("int"))
 
